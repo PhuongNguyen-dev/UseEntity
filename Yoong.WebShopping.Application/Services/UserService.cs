@@ -3,45 +3,46 @@ using Microsoft.EntityFrameworkCore;
 using UseEntity.Entities;
 using UseEntity.Interfaces;
 using UseEntity.Models;
+using Yoong.WebShopping.Application.Models;
+using Yoong.WebShopping.DAO.InterfacesDAO;
+using Yoong.WebShopping.DAO.ServiceDAO;
 
 namespace UseEntity.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserService : IUserRepository
     {
         private readonly IMapper _mapper;
-        private readonly WebShopContext _context;
-        public UserRepository(WebShopContext context, IMapper mapper)
+        private readonly IUserDAO _userDAO;
+        public UserService(IUserDAO userDAO, IMapper mapper)
         {
-            _context = context;
+            _userDAO = userDAO;
             _mapper = mapper;
         }
-        public async Task<Guid> AddUserAsync(UserModel model)
+        public async Task<Guid> AddUserAsync(CreateUserModel model)
         {
             var newUser = _mapper.Map<User>(model);
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
+            _userDAO.CreateUser(newUser);
             return newUser.UserId;
         }
 
         public async Task DeleteUserAsync(Guid userId)
         {
-            var deleteUser = _context.Users.SingleOrDefault(x => x.UserId == userId);
+            var deleteUser = await _userDAO.GetByID(userId);
             if (deleteUser != null)
             {
-                _context.Users.Remove(deleteUser);
-                await _context.SaveChangesAsync();
+               await _userDAO.DeleteUser(deleteUser);
             }
         }
 
         public async Task<List<UserModel>> getAllUserAsync()
         {
-            var users = await _context.Users!.ToListAsync();
+            var users = await _userDAO.GetAll();
             return _mapper.Map<List<UserModel>>(users);
         }
 
         public async Task<UserModel> getUserAsync(Guid userId)
         {
-            var user = await _context.Users!.FindAsync(userId);
+            var user = await _userDAO.GetByID(userId);
             return _mapper.Map<UserModel>(user);
         }
 
@@ -50,8 +51,7 @@ namespace UseEntity.Repositories
             var updateUser = _mapper.Map<User>(model);
             if (updateUser != null)
             {
-                _context.Users.Update(updateUser);
-                await _context.SaveChangesAsync();
+                await _userDAO.UpdateUser(updateUser);
             }
             else
             {

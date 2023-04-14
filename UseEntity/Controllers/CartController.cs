@@ -16,30 +16,26 @@ namespace Yoong.WebShopping.Controllers
         {
             _cartRepo = cartRepo;
         }
+
+        //---------------------
+
         [HttpPost("AddToCart")]
-        public async Task<IActionResult> AddToCart(Guid userId, Guid prodid, int quatity)
+        public async Task<IActionResult> AddToCart(Guid userId, Guid prodId, int quatity)
         {
-            await _cartRepo.AddToCart(userId, prodid, quatity);
+            await _cartRepo.AddToCart(userId, prodId, quatity);
 
             return Created("", null);
         }
 
-        [HttpPost("UpdateToCart")]
-        public async Task<IActionResult> UpdateToCart(Guid userId, Guid prodid, int quatity)
+        [HttpPut("UpdateQuatity")]
+        public async Task UpdateQuatity(Guid cartId, int quatity)
         {
-            await _cartRepo.UpdateToCart(userId, prodid, quatity);
-
-            return Created("", null);
+           await _cartRepo.UpdateQuatity(cartId,quatity);
         }
 
-        //[HttpPost("GetByUserId")]
-        //public async Task<List<CartModel>> GetByUserID(Guid userId)
-        //{
-        //     return await _cartRepo.GetByUserID(userId);
 
-        //}
-        [HttpPost("getByUserId")]
-        public async Task<CartModel> getByUserId(Guid userId)
+        [HttpGet("GetMyCart")]
+        public async Task<List<CartModel>> GetMyCart(Guid userId)
         {
             return await _cartRepo.getByUserId(userId);
         }

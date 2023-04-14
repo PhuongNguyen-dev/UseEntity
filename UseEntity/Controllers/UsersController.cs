@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UseEntity.Interfaces;
 using UseEntity.Models;
+using Yoong.WebShopping.Application.Models;
 
 namespace UseEntity.Controllers
 {
@@ -29,7 +30,7 @@ namespace UseEntity.Controllers
             return user == null ? NotFound() : Ok(user);
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewUser(UserModel model)
+        public async Task<IActionResult> AddNewUser(CreateUserModel model)
         {
             var newUser = await _UserRepo.AddUserAsync(model);
             var user = await _UserRepo.getUserAsync(newUser);

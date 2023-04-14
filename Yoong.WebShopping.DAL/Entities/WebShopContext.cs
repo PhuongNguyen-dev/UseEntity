@@ -6,7 +6,6 @@ namespace UseEntity.Entities
     {
         public WebShopContext(DbContextOptions options) : base(options)
         {
-
         }
         #region DbSet
         public DbSet<User> Users { get; set; }

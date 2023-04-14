@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UseEntity.Interfaces;
 using UseEntity.Models;
+using Yoong.WebShopping.Application.Models;
 
 namespace UseEntity.Controllers
 {
@@ -29,16 +30,16 @@ namespace UseEntity.Controllers
             return prod == null ? NotFound() : Ok(prod);
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewProd(ProductModel model)
+        public async Task<IActionResult> AddNewProd(CreateProductModel model)
         {
             var newProd = await _ProdRepo.AddProdAsync(model);
             var prod = await _ProdRepo.getProdAsync(newProd);
             return prod == null ? NotFound() : Ok(prod);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateProd( ProductModel model)
+        public async Task<IActionResult> UpdateProd(ProductModel model)
         {
-            await _ProdRepo.UpdateProdAsync( model);
+            await _ProdRepo.UpdateProdAsync(model);
             return Ok();
         }
         [HttpDelete("{prodId}")]
@@ -47,5 +48,6 @@ namespace UseEntity.Controllers
             await _ProdRepo.DeleteProdAsync(prodId);
             return Ok();
         }
+
     }
 }

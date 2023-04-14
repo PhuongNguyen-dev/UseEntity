@@ -5,6 +5,8 @@ using UseEntity.Interfaces;
 using UseEntity.Repositories;
 using Yoong.WebShopping.Application.Interfaces;
 using Yoong.WebShopping.Application.Repositories;
+using Yoong.WebShopping.DAO.InterfacesDAO;
+using Yoong.WebShopping.DAO.ServiceDAO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +17,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
-policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<WebShopContext>(options =>
@@ -32,9 +35,12 @@ builder.Services.AddAutoMapper(config=>
 
 
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IUserRepository, UserService>();
+builder.Services.AddScoped<IProductRepository, ProductService>();
+builder.Services.AddScoped<ICartRepository, CartService>();
+builder.Services.AddScoped<IProductDAO, ProductDAO>();
+builder.Services.AddScoped<IUserDAO, UserDAO>();
+builder.Services.AddScoped<ICartDAO, CartDAO>();
 
 var app = builder.Build();
 
@@ -48,6 +54,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors("corsapp");
 
 app.MapControllers();
 

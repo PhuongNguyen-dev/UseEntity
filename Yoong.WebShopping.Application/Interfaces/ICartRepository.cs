@@ -10,10 +10,9 @@ namespace Yoong.WebShopping.Application.Interfaces
 {
     public interface ICartRepository
     {
-        //public Task<List<CartModel>> GetByUserID(Guid userId);
-        public Task AddToCart(Guid userId, Guid prodid, int quatity);
-        public Task UpdateToCart(Guid userId, Guid prodid, int quatity);
-        public Task<CartModel> getByUserId(Guid userId);
-
+        public Task AddToCart(Guid userId, Guid prodId, int quatity);
+        public Task DeleteCartItem(Guid cartId);
+        public Task UpdateQuatity(Guid cartId, int quatity);
+        public Task<List<CartModel>> getByUserId(Guid userId);
     }
 }

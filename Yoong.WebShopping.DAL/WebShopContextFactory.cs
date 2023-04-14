@@ -16,6 +16,8 @@ namespace Yoong.WebShopping.DAO
             Console.WriteLine("All In webShope");
             var optionsBuilder = new DbContextOptionsBuilder<WebShopContext>();
 
+        
+
             optionsBuilder.UseSqlServer("Data Source = DESKTOP-MLHK8LP\\MSSQLSERVER01; Initial Catalog = MyWebShop;Trusted_Connection=True;TrustServerCertificate=True;", option =>
             {
                 

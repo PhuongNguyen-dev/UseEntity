@@ -1,65 +1,74 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using UseEntity.Entities;
 using UseEntity.Interfaces;
 using UseEntity.Models;
+using Yoong.WebShopping.Application.Models;
+using Yoong.WebShopping.DAO.InterfacesDAO;
 
 namespace UseEntity.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductService : IProductRepository
     {
         private readonly IMapper _mapper;
-        private readonly WebShopContext _context;
-        public ProductRepository(WebShopContext context, IMapper mapper)
+        private readonly IProductDAO _prodDao;
+        public ProductService(IProductDAO prodDao, IMapper mapper)
         {
-            _context = context;
+            _prodDao = prodDao;
             _mapper = mapper;
         }
-        public async Task<Guid> AddProdAsync(ProductModel model)
+
+        public async Task<Guid> AddProdAsync(CreateProductModel model)
         {
             var newProd = _mapper.Map<Product>(model);
-            _context.Add(newProd);
-            await _context.SaveChangesAsync();
-            return newProd.ProductId;
-
+            _prodDao.CreateProduct(newProd);
+            return await Task.FromResult(newProd.ProductId);
         }
 
         public async Task DeleteProdAsync(Guid productId)
         {
-            var deleteProd = _context.Products.SingleOrDefault(x => x.ProductId == productId);
+            var deleteProd = await _prodDao.GetByID(productId);
             if (deleteProd != null)
             {
-                _context.Products.Remove(deleteProd);
-                await _context.SaveChangesAsync();
+                await _prodDao.DeleteProd(deleteProd);
             }
         }
 
         public async Task<List<ProductModel>> getAllProdAsync()
         {
-            var prod = await _context.Products!.ToListAsync();
+            var prod = await _prodDao.GetAll();
+
             return _mapper.Map<List<ProductModel>>(prod);
         }
 
-        public async Task<ProductModel> getProdAsync(Guid productId)
+        public async Task<ProductModel> getProdAsync(Guid prodId)
         {
-            var prod = await _context.Products!.FindAsync(productId);
-            return _mapper.Map<ProductModel>(prod);
+            var prod =await _prodDao.GetByID(prodId);
+
+            return  _mapper.Map<ProductModel>(prod);
         }
 
         public async Task UpdateProdAsync(ProductModel model)
         {
             var updateProd = _mapper.Map<Product>(model);
-            
+
             if (updateProd.ProductId == model.ProductId)
             {
-                _context.Update(updateProd);
-                await _context.SaveChangesAsync();
+                await _prodDao.UpdateProd(updateProd);
             }
             else
             {
                 Console.WriteLine("ngiu vcd");
             }
+
+
         }
+
+        
+
+
+
     }
 }
